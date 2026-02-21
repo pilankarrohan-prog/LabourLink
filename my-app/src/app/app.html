@@ -1,0 +1,56 @@
+<div *ngIf="isLoggedIn" class="layout-wrapper">
+  <router-outlet></router-outlet>
+</div>
+
+<div *ngIf="!isLoggedIn" class="auth-container">
+  <div class="auth-card">
+    <!-- Left Side: Brand -->
+    <div class="auth-visual">
+      <h1>Labour Connect</h1>
+      <p>Find skilled professionals or get hired today.</p>
+    </div>
+
+    <!-- Right Side: Forms -->
+    <div class="auth-form-wrapper">
+      
+      <div class="tabs">
+        <button [class.active]="viewMode==='login'" (click)="viewMode='login'">Sign In</button>
+        <button [class.active]="viewMode==='register'" (click)="viewMode='register'">Create Account</button>
+      </div>
+
+      <!-- Login -->
+      <form *ngIf="viewMode==='login'" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <label>Email Address</label>
+        <input type="email" formControlName="email" placeholder="john@example.com">
+        
+        <label>Password</label>
+        <input type="password" formControlName="password" placeholder="••••••">
+        
+        <button type="submit" class="btn-primary" [disabled]="loginForm.invalid">Access Dashboard</button>
+      </form>
+
+      <!-- Register -->
+      <form *ngIf="viewMode==='register'" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+        <label>I am a...</label>
+        <div class="role-group">
+          <label class="radio-card">
+            <input type="radio" value="user" formControlName="role"> <span>Hirer</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" value="labourer" formControlName="role"> <span>Worker</span>
+          </label>
+        </div>
+
+        <input type="text" formControlName="name" placeholder="Full Name">
+        <input type="email" formControlName="email" placeholder="Email">
+        <input type="password" formControlName="password" placeholder="Password (Min 6 chars)">
+        <div class="row">
+          <input type="text" formControlName="address" placeholder="City/Location">
+          <input type="text" formControlName="contact" placeholder="Phone Number">
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="registerForm.invalid">Register</button>
+      </form>
+    </div>
+  </div>
+</div>

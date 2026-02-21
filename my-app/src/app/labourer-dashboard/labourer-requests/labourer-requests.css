@@ -1,0 +1,32 @@
+h2 { color: #0f172a; font-size: 28px; margin-bottom: 24px; font-weight: 700; }
+
+.request-card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.request-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+.badge {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 12px;
+  background: #f1f5f9;
+  color: #475569;
+}
+.badge.pending { background: #fef3c7; color: #d97706; }
+
+.btn-accept { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 10px; transition: 0.2s; }
+.btn-accept:hover { background: #059669; }
+
+.btn-deny { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.btn-deny:hover { background: #dc2626; }

@@ -1,0 +1,49 @@
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand-logo">
+      <span class="icon">🛠️</span> Worker Pro
+    </div>
+    <nav class="nav-menu">
+      <a routerLink="."
+   routerLinkActive="active"
+   [routerLinkActiveOptions]="{ exact: true }">
+  📊 Overview
+</a>
+
+<a routerLink="requests"
+   routerLinkActive="active">
+  📨 Job Requests
+</a>
+
+<a routerLink="reviews"
+   routerLinkActive="active">
+  ⭐ My Reviews
+</a>
+
+<a routerLink="settings"
+   routerLinkActive="active">
+  👤 Profile Settings
+</a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <!-- TOP NAVBAR -->
+    <header class="navbar">
+      <div class="nav-left">
+        <h2>Professional Dashboard 💼</h2>
+      </div>
+      <div class="profile-menu">
+        <button class="btn-logout" (click)="logout()">Secure Logout</button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="content-area">
+      <div class="content-container">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>

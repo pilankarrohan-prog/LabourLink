@@ -1,0 +1,62 @@
+<div class="user-layout">
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="logo">Services</div>
+    <div class="nav-right">
+      <a routerLink="/user-dashboard/bookings">My Bookings</a>
+      <button (click)="auth.logout()" class="btn-nav-logout">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Modern Search Bar -->
+    <div class="search-hero">
+      <h1>Find Professionals Nearby</h1>
+      <p>Instant booking, verified reviews, sorted by your city.</p>
+      
+      <div class="search-box">
+        <div class="field">
+          <label>Service</label>
+          <select [(ngModel)]="selectedType">
+            <option value="">Choose Service...</option>
+            <option *ngFor="let t of workerTypes" [value]="t">{{t}}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Location (City)</label>
+          <input [(ngModel)]="userLocation" placeholder="e.g. Mumbai">
+        </div>
+        <div class="field">
+          <label>When?</label>
+          <input type="datetime-local" [(ngModel)]="selectedDate">
+        </div>
+        <button class="btn-search" (click)="search()" [disabled]="isLoading">
+          {{ isLoading ? 'Searching...' : 'Search' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Grid -->
+    <div class="results-area" *ngIf="workers.length > 0">
+      <h2>Top Professionals for you</h2>
+      <div class="worker-grid">
+        <div class="worker-card" *ngFor="let w of workers">
+          <div class="card-header">
+            <div class="avatar">{{w.name.charAt(0)}}</div>
+            <div class="info">
+              <h3>{{w.name}}</h3>
+              <span class="badge">{{w.skill}}</span>
+            </div>
+            <div class="rating">⭐ {{w.rating}}</div>
+          </div>
+          <div class="card-body">
+            <p><strong>📍 Location:</strong> {{w.address}}</p>
+            <p><strong>🎓 Experience:</strong> {{w.experience}} Years</p>
+            <p><strong>👤 Details:</strong> {{w.age}} yrs, {{w.gender}}</p>
+          </div>
+          <button class="btn-book" (click)="book(w.user_id)">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

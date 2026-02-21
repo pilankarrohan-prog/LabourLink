@@ -1,0 +1,26 @@
+.auth-container {
+  display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #eef2f6;
+}
+.auth-card {
+  display: flex; width: 900px; background: white; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+.auth-visual {
+  flex: 1; background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+  color: white; padding: 4rem; display: flex; flex-direction: column; justify-content: center;
+}
+.auth-visual h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+.auth-form-wrapper { flex: 1; padding: 3rem; }
+.tabs { display: flex; border-bottom: 2px solid #e5e7eb; margin-bottom: 2rem; }
+.tabs button {
+  flex: 1; padding: 1rem; background: none; color: #6b7280; font-weight: 600;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.tabs button.active { color: #4f46e5; border-color: #4f46e5; }
+.role-group { display: flex; gap: 1rem; margin-bottom: 1rem; }
+.radio-card {
+  flex: 1; border: 1px solid #d1d5db; padding: 0.75rem; border-radius: 8px; text-align: center; cursor: pointer;
+}
+.radio-card:has(input:checked) { border-color: #4f46e5; background: #e0e7ff; color: #4f46e5; }
+.row { display: flex; gap: 10px; }
+.row input { flex: 1; }

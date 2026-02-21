@@ -1,0 +1,51 @@
+<h2>My Bookings History</h2>
+<div *ngIf="bookings.length === 0" class="card">
+  <p>No bookings yet.</p>
+</div>
+
+<div class="booking-card" *ngFor="let booking of bookings">
+  <div style="display:flex; justify-content:space-between">
+    <h4>{{booking.service_type}}</h4>
+    <span class="status"="{
+      'active': booking.status === 'pending',
+      'completed': booking.status === 'confirmed',
+      'rejected': booking.status === 'rejected'
+    }">
+      {{booking.status | titlecase}}
+    </span>
+  </div>
+  
+  <p><strong>Worker:</strong> {{booking.labourer_name}}</p>
+  <p><strong>Date:</strong> {{booking.booking_date | date:'medium'}}</p>
+  
+  <!-- Success Output -->
+  <div *ngIf="booking.status === 'confirmed'" style="margin-top:10px; padding-top:10px; border-top:1px solid #333">
+    <p style="color:#00bcd4; margin-bottom: 10px;">✅ Booking Confirmed! Contact: {{booking.labourer_contact}}</p>
+    
+    <!-- Leave Review Action -->
+    <button *ngIf="activeReviewId !== booking.id" (click)="openReviewForm(booking.id)" class="review-btn">
+      ⭐ Leave a Review
+    </button>
+    
+    <!-- Review Form Section -->
+    <div *ngIf="activeReviewId === booking.id" class="review-box">
+      <h5>Rate this worker</h5>
+      <select="ratingValue">
+        <option="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
+        <option="4">⭐⭐⭐⭐ (4 Stars)</option>
+        <option="3">⭐⭐⭐ (3 Stars)</option>
+        <option="2">⭐⭐ (2 Stars)</option>
+        <option="1">⭐ (1 Star)</option>
+      </select>
+      <input type="text"="reviewComment" placeholder="Write your experience..." class="review-input">
+      <div style="margin-top: 10px;">
+        <button (click)="submitReview(booking)" class="submit-review-btn">Submit</button>
+        <button (click)="activeReviewId = null" class="cancel-review-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="booking.status === 'rejected'" style="margin-top:10px; color:#ff4d4d">
+    <p>Worker denied the request. Please search for another professional.</p>
+  </div>
+</div>
