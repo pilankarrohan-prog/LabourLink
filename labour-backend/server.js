@@ -12,13 +12,13 @@ app.use(bodyParser.json());
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'root',
+  password: 'root',   // Make sure your DB password is correct
   database: 'labour_app'
 });
 
 db.connect((err) => {
-  if (err) console.error('❌ DB Error:', err.message);
-  else console.log('✅ DB Connected');
+  if (err) console.error('❌ DATABASE Error:', err.message);
+  else console.log('✅ DATABASE Connected');
 });
 
 // ================= TOKEN MIDDLEWARE =================
@@ -33,238 +33,112 @@ function verifyToken(req, res, next) {
   });
 }
 
-// ====================================================
-// 🔐 AUTH
-// ====================================================
-
+// ================= AUTH =================
 app.post('/register', async (req, res) => {
   const { role, name, email, password, address, contact } = req.body;
-
   try {
     const hashed = await bcrypt.hash(password, 10);
-    const insertData = [role, name, email, hashed, address, contact];
+    const insertData =[role, name, email, hashed, address, contact];
 
     db.query(
-      `INSERT INTO users (role, name, email, password, address, contact, is_active)
-       VALUES (?, ?, ?, ?, ?, ?, true)`,
+      `INSERT INTO users (role, name, email, password, address, contact, is_active) VALUES (?, ?, ?, ?, ?, ?, true)`,
       insertData,
-      (err) => {
+      (err, result) => {
         if (err) return res.status(500).json({ message: err.message });
-        res.json({ message: "Registration successful" });
+        
+        if (role === 'labourer') {
+          db.query(`INSERT INTO labourers (user_id, skill, experience, rating, age, gender, is_available) VALUES (?, 'General', 0, 5, 18, 'Any', true)`, 
+            [result.insertId], 
+            () => res.json({ message: "Registration successful" })
+          );
+        } else {
+          res.json({ message: "Registration successful" });
+        }
       }
     );
-
   } catch (e) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
 app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  const loginData = [email];
-
-  db.query("SELECT * FROM users WHERE email = ?", loginData, async (err, results) => {
-
-    if (err) return res.status(500).json({ message: "Database error" });
-    if (results.length === 0) return res.status(401).json({ message: "User not found" });
-
+  db.query("SELECT * FROM users WHERE email = ?", [req.body.email], async (err, results) => {
+    if (err || results.length === 0) return res.status(401).json({ message: "User not found" });
     const user = results[0];
+    if (!user.is_active) return res.status(403).json({ message: "Account banned" });
 
-    if (!user.is_active)
-      return res.status(403).json({ message: "Account banned" });
-
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await bcrypt.compare(req.body.password, user.password);
     if (!valid) return res.status(401).json({ message: "Invalid password" });
 
-    const token = jwt.sign(
-      { id: user.id, role: user.role },
-      "secretkey",
-      { expiresIn: "24h" }
-    );
-
-    res.json({
-      message: "Login successful",
-      token,
-      role: user.role,
-      name: user.name
-    });
+    const token = jwt.sign({ id: user.id, role: user.role }, "secretkey", { expiresIn: "24h" });
+    res.json({ message: "Login successful", token, role: user.role, name: user.name });
   });
 });
 
-// ====================================================
-// 👑 ADMIN
-// ====================================================
 
-app.get('/admin/users', verifyToken, (req, res) => {
-  if (req.user.role !== 'admin')
-    return res.status(403).json({ message: "Forbidden" });
-
-  db.query(
-    "SELECT id, name, email, role, is_active FROM users WHERE role != 'admin'",
-    (err, results) => res.json(results)
-  );
-});
-
-app.post('/admin/toggle-status', verifyToken, (req, res) => {
-  if (req.user.role !== 'admin')
-    return res.status(403).json({ message: "Forbidden" });
-
-  const { userId, isActive } = req.body;
-  const updateData = [isActive, userId];
-
-  db.query(
-    "UPDATE users SET is_active = ? WHERE id = ?",
-    updateData,
-    () => res.json({ message: "Status updated" })
-  );
-});
-
-// ====================================================
-// 🔎 SEARCH WORKERS
-// ====================================================
-
+// ================= SEARCH & BOOKING =================
 app.post('/search-workers', verifyToken, (req, res) => {
   const { category, location } = req.body;
-  const searchData = [category];
-
+  // LOWER() guarantees that 'pune', 'Pune', and 'PUN' all match correctly
   const sql = `
-    SELECT u.id as user_id, u.name, u.address, u.contact,
-           l.skill, l.experience, l.rating, l.age, l.gender, l.is_available
-    FROM users u
-    JOIN labourers l ON u.id = l.user_id
-    WHERE l.skill = ? AND l.is_available = true
+    SELECT u.id as id, u.id as user_id, u.name, u.address, u.contact, l.skill, l.experience, l.rating, l.age, l.gender
+    FROM users u JOIN labourers l ON u.id = l.user_id
+    WHERE l.skill = ? AND LOWER(u.address) LIKE LOWER(?) AND l.is_available = true
   `;
-
-  db.query(sql, searchData, (err, results) => {
-    if (err) return res.status(500).json({ message: "Search error" });
+  db.query(sql,[category, `%${location}%`], (err, results) => {
+    if (err) return res.status(500).json({ message: "Search Error", error: err.message });
     res.json(results);
   });
 });
-
-// ====================================================
-// 📅 BOOKINGS
-// ====================================================
 
 app.post('/book-worker', verifyToken, (req, res) => {
   const { labourerId, serviceType, date, address } = req.body;
-  const bookData = [req.user.id, labourerId, serviceType, date, address];
-
-  const sql = `
-    INSERT INTO bookings (user_id, labourer_id, service_type, booking_date, address, status)
-    VALUES (?, ?, ?, ?, ?, 'pending')
-  `;
-
-  db.query(sql, bookData, () => res.json({ message: "Request sent" }));
-});
-
-app.get('/user-bookings', verifyToken, (req, res) => {
-  const queryData = [req.user.id];
-
-  const sql = `
-    SELECT b.*, u.name as labourer_name
-    FROM bookings b
-    JOIN users u ON b.labourer_id = u.id
-    WHERE b.user_id = ?
-    ORDER BY b.id DESC
-  `;
-
-  db.query(sql, queryData, (err, results) => res.json(results));
-});
-
-// ====================================================
-// 🛠 LABOURER
-// ====================================================
-
-app.post('/toggle-availability', verifyToken, (req, res) => {
-  const { status } = req.body;
-  const toggleData = [status, req.user.id];
-
-  db.query(
-    `UPDATE labourers SET is_available = ? WHERE user_id = ?`,
-    toggleData,
-    () => res.json({ message: "Availability updated" })
-  );
-});
-
-app.get('/labourer-requests', verifyToken, (req, res) => {
-  const queryData = [req.user.id];
-
-  const sql = `
-    SELECT b.*, u.name as user_name
-    FROM bookings b
-    JOIN users u ON b.user_id = u.id
-    WHERE b.labourer_id = ?
-    ORDER BY b.id DESC
-  `;
-
-  db.query(sql, queryData, (err, results) => res.json(results));
-});
-
-app.post('/respond-booking', verifyToken, (req, res) => {
-  const { bookingId, status } = req.body;
-  const respondData = [status, bookingId];
-
-  db.query(
-    `UPDATE bookings SET status = ? WHERE id = ?`,
-    respondData,
-    () => res.json({ message: "Updated" })
-  );
-});
-
-app.listen(3000, () =>
-  console.log('🚀 Server running on port 3000')
-);
-
-// --- NEW PRO ADMIN FEATURES ---
-
-// 1. Get Dashboard Stats
-app.get('/admin/stats', verifyToken, (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: "Forbidden" });
   
-  const sql = `
-    SELECT 
-      (SELECT COUNT(*) FROM users WHERE role='user') as total_users,
-      (SELECT COUNT(*) FROM users WHERE role='labourer') as total_labourers,
-      (SELECT COUNT(*) FROM bookings WHERE status='pending' OR status='confirmed') as active_bookings,
-      (SELECT COUNT(*) * 500 FROM bookings WHERE status='confirmed') as total_revenue
-  `;
-  db.query(sql, (err, results) => {
-    if(err) return res.status(500).json({message: "Error fetching stats"});
-    res.json(results[0]);
+  if (!labourerId) return res.status(400).json({ message: "Worker ID is missing in database!" });
+  if (!date) return res.status(400).json({ message: "Date is missing!" });
+
+  const formattedDate = date.replace('T', ' ') + ':00';
+  const sql = `INSERT INTO bookings (user_id, labourer_id, service_type, booking_date, address, status) VALUES (?, ?, ?, ?, ?, 'pending')`;
+  
+  db.query(sql, [req.user.id, labourerId, serviceType, formattedDate, address], (err, result) => {
+    if (err) return res.status(500).json({ message: "Database Error", error: err.message });
+    res.json({ message: "Request sent successfully" });
   });
 });
 
-// 2. Delete User
-app.post('/admin/delete-user', verifyToken, (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: "Forbidden" });
-  db.query("DELETE FROM users WHERE id = ?", [req.body.userId], (err) => {
-    if(err) return res.status(500).json({message: "Error deleting user"});
-    res.json({message: "User deleted"});
-  });
-});
+// ================= LABOURER REQUESTS =================
+app.get('/labourer-requests', verifyToken, (req, res) => {
+  if (req.user.role !== 'labourer') {
+    return res.status(403).json({ message: "⚠️ You are logged in as a User/Hirer! Please log in as the Worker." });
+  }
 
-// 3. Get All Bookings
-app.get('/admin/bookings', verifyToken, (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: "Forbidden" });
   const sql = `
-    SELECT b.id, b.service_type, b.status, b.booking_date, b.address, 
-           u1.name as user_name, u2.name as labourer_name 
+    SELECT b.*, COALESCE(u.name, 'Unknown User') as user_name 
     FROM bookings b 
-    JOIN users u1 ON b.user_id = u1.id 
-    JOIN users u2 ON b.labourer_id = u2.id
-    ORDER BY b.created_at DESC
+    LEFT JOIN users u ON b.user_id = u.id 
+    WHERE b.labourer_id = ? 
+    ORDER BY b.id DESC
   `;
-  db.query(sql, (err, results) => {
-    if(err) return res.status(500).json({message: "Error fetching bookings"});
+  
+  db.query(sql, [req.user.id], (err, results) => {
+    if (err) return res.status(500).json(err);
     res.json(results);
   });
 });
 
-// 4. Admin Update Booking Status
-app.post('/admin/update-booking', verifyToken, (req, res) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: "Forbidden" });
-  db.query("UPDATE bookings SET status = ? WHERE id = ?", [req.body.status, req.body.bookingId], (err) => {
-    if(err) return res.status(500).json({message: "Error updating booking"});
-    res.json({message: "Booking updated"});
+app.post('/respond-booking', verifyToken, (req, res) => {
+  db.query(`UPDATE bookings SET status = ? WHERE id = ?`,[req.body.status, req.body.bookingId], () => res.json({ message: "Updated" }));
+});
+
+app.post('/toggle-availability', verifyToken, (req, res) => {
+  db.query(`UPDATE labourers SET is_available = ? WHERE user_id = ?`,[req.body.status, req.user.id], () => res.json({ message: "Availability updated" }));
+});
+
+app.post('/save-labourer-profile', verifyToken, (req, res) => {
+  const { name, address, contact, skill, experience, age, gender } = req.body;
+  db.query(`UPDATE users SET name=?, address=?, contact=? WHERE id=?`, [name, address, contact, req.user.id], () => {
+    db.query(`UPDATE labourers SET skill=?, experience=?, age=?, gender=? WHERE user_id=?`, [skill, experience, age, gender, req.user.id], () => res.json({ message: "Saved" }));
   });
 });
+
+app.listen(3000, () => console.log('🚀 Server running on port 3000'));

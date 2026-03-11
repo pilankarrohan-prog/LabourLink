@@ -1,26 +1,95 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.layout { display: flex; height: 100vh; background: #f8fafc; font-family: 'Inter', sans-serif; overflow: hidden; }
+.layout { 
+  display: flex; 
+  height: 100vh; 
+  background: #f4f7fe; /* Soft Light Background */
+  font-family: 'Inter', sans-serif; 
+  overflow: hidden; 
+}
 
-.sidebar { width: 260px; background: #0f172a; color: #fff; display: flex; flex-direction: column; padding: 24px 16px; box-shadow: 4px 0 15px rgba(0,0,0,0.05); z-index: 10; }
+/* --- Premium White Sidebar --- */
+.sidebar { 
+  width: 280px; 
+  background: #ffffff; 
+  color: #1e293b; 
+  display: flex; 
+  flex-direction: column; 
+  padding: 30px 20px; 
+  box-shadow: 4px 0 24px rgba(0,0,0,0.03); 
+  z-index: 10; 
+  border-right: 1px solid #e2e8f0; 
+}
 
-.brand-logo { font-size: 22px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 10px; padding: 0 12px; margin-bottom: 40px; }
+.brand-logo { 
+  font-size: 24px; 
+  font-weight: 800; 
+  color: #4f46e5; /* Primary Indigo */
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  padding: 0 12px; 
+  margin-bottom: 40px; 
+  letter-spacing: -0.5px; 
+}
 
 .nav-menu { display: flex; flex-direction: column; gap: 8px; }
 
-.nav-menu a { padding: 14px 16px; border-radius: 12px; color: #94a3b8; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease; }
-.nav-menu a:hover { background: #1e293b; color: #fff; transform: translateX(5px); }
+.nav-menu a { 
+  padding: 14px 18px; 
+  border-radius: 12px; 
+  color: #64748b; 
+  text-decoration: none; 
+  font-weight: 600; 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  transition: all 0.3s ease; 
+}
+.nav-menu a:hover { 
+  background: #f8fafc; 
+  color: #4f46e5; 
+  transform: translateX(4px); 
+}
 
-/* Emerald Green Gradient for Labourer */
-.nav-menu a.active { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); font-weight: 600; }
+/* Active State */
+.nav-menu a.active { 
+  background: #4f46e5; 
+  color: #ffffff; 
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); 
+}
 
 .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100vh; }
 
-.navbar { height: 76px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; padding: 0 32px; z-index: 5; }
-.navbar h2 { font-size: 20px; color: #0f172a; margin: 0; font-weight: 600; }
+/* --- Top Navbar --- */
+.navbar { 
+  height: 80px; 
+  background: rgba(255, 255, 255, 0.8); 
+  backdrop-filter: blur(12px); 
+  border-bottom: 1px solid #e2e8f0; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 0 40px; 
+  z-index: 5; 
+}
+.navbar h2 { font-size: 22px; color: #0f172a; margin: 0; font-weight: 700; }
 
-.btn-logout { background: transparent; border: 2px solid #ef4444; color: #ef4444; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-.btn-logout:hover { background: #ef4444; color: white; }
+.btn-logout { 
+  background: white; 
+  border: 2px solid #ef4444; 
+  color: #ef4444; 
+  padding: 8px 24px; 
+  border-radius: 10px; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: 0.3s; 
+}
+.btn-logout:hover { 
+  background: #ef4444; 
+  color: white; 
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); 
+}
 
-.content-area { flex: 1; overflow-y: auto; padding: 32px; }
+.content-area { flex: 1; overflow-y: auto; padding: 40px; }
 .content-container { max-width: 1000px; margin: 0 auto; }

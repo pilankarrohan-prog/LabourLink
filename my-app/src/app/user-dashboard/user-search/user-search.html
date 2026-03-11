@@ -1,10 +1,9 @@
 <div class="user-layout">
   <!-- Top Navbar -->
   <header class="navbar">
-    <div class="logo">Services</div>
+    <div class="logo">LabourConnect</div>
     <div class="nav-right">
       <a routerLink="/user-dashboard/bookings">My Bookings</a>
-      <button (click)="auth.logout()" class="btn-nav-logout">Logout</button>
     </div>
   </header>
 
@@ -24,10 +23,10 @@
         </div>
         <div class="field">
           <label>Location (City)</label>
-          <input [(ngModel)]="userLocation" placeholder="e.g. Mumbai">
+          <input [(ngModel)]="userLocation" placeholder="e.g. Pune">
         </div>
         <div class="field">
-          <label>When?</label>
+          <label>When? (Required for Booking)</label>
           <input type="datetime-local" [(ngModel)]="selectedDate">
         </div>
         <button class="btn-search" (click)="search()" [disabled]="isLoading">
@@ -42,7 +41,7 @@
       <div class="worker-grid">
         <div class="worker-card" *ngFor="let w of workers">
           <div class="card-header">
-            <div class="avatar">{{w.name.charAt(0)}}</div>
+            <div class="avatar">{{w.name.charAt(0) | uppercase}}</div>
             <div class="info">
               <h3>{{w.name}}</h3>
               <span class="badge">{{w.skill}}</span>
@@ -54,7 +53,10 @@
             <p><strong>🎓 Experience:</strong> {{w.experience}} Years</p>
             <p><strong>👤 Details:</strong> {{w.age}} yrs, {{w.gender}}</p>
           </div>
-          <button class="btn-book" (click)="book(w.user_id)">Book Now</button>
+          
+          <!-- 🛠️ FIX 3: Passes the full 'w' object so the ID is guaranteed to be correct -->
+          <button class="btn-book" (click)="book(w)">Book Now</button>
+          
         </div>
       </div>
     </div>
