@@ -21,8 +21,8 @@
       </div>
       <div class="nav-actions">
         <button class="icon-btn" (click)="toggleTheme()">
-          {{ isDarkMode ? '☀️ Light' : '🌙 Dark' }}
-        </button>
+  {{ isDarkMode ? '☀️ Light' : '🌙 Dark' }}
+</button>
         <button class="btn-export" (click)="exportCSV()">📥 Export CSV</button>
         <button class="btn-logout" (click)="logout()">Logout</button>
       </div>
@@ -98,6 +98,11 @@
               </tr>
             </thead>
             <tbody>
+              <tr *ngIf="filteredUsers.length === 0">
+  <td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted);">
+    No users found in the database.
+  </td>
+</tr>
               <tr *ngFor="let u of filteredUsers" class="hover-row">
                 <td>#{{u.id}}</td>
                 <td><strong>{{u.name}}</strong></td>
@@ -129,6 +134,11 @@
               <tr><th>Job ID</th><th>Service</th><th>Hirer</th><th>Worker</th><th>Date</th><th>Status</th><th>Action</th></tr>
             </thead>
             <tbody>
+              <tr *ngIf="bookings.length === 0">
+  <td colspan="7" style="text-align: center; padding: 30px; color: var(--text-muted);">
+    No bookings found in the database.
+  </td>
+</tr>
               <tr *ngFor="let b of bookings">
                 <td>#{{b.id}}</td>
                 <td>{{b.service_type}}</td>

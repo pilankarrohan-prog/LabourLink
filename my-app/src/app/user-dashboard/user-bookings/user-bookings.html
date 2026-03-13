@@ -1,18 +1,13 @@
 <h2>My Bookings History</h2>
 
 <div *ngIf="bookings.length === 0" class="card">
-  <p>No bookings yet.</p>
+  <p>You have no bookings yet.</p>
 </div>
 
 <div class="booking-card" *ngFor="let booking of bookings">
-  <div style="display:flex; justify-content:space-between">
+  <div class="card-header-split">
     <h4>{{booking.service_type}}</h4>
-    <!-- FIX: Corrected ngClass syntax -->
-    <span class="status" [ngClass]="{
-      'active': booking.status === 'pending',
-      'completed': booking.status === 'confirmed',
-      'rejected': booking.status === 'rejected'
-    }">
+    <span class="status badge" [ngClass]="booking.status">
       {{booking.status | titlecase}}
     </span>
   </div>
@@ -20,39 +15,31 @@
   <p><strong>Worker:</strong> {{booking.labourer_name}}</p>
   <p><strong>Date:</strong> {{booking.booking_date | date:'medium'}}</p>
   
-  <!-- Success Output -->
-  <div *ngIf="booking.status === 'confirmed'" style="margin-top:10px; padding-top:10px; border-top:1px solid #e2e8f0">
-    <p style="color:#059669; margin-bottom: 10px; font-weight:600;">✅ Booking Confirmed! Contact: {{booking.labourer_contact}}</p>
+  <div *ngIf="booking.status === 'confirmed'" class="success-box">
+    <p class="success-text">✅ Worker Confirmed! Contact: {{booking.labourer_contact}}</p>
     
-    <!-- Leave Review Action -->
     <button *ngIf="activeReviewId !== booking.id" (click)="openReviewForm(booking.id)" class="review-btn">
       ⭐ Leave a Review
     </button>
     
-    <!-- Review Form Section -->
     <div *ngIf="activeReviewId === booking.id" class="review-box">
       <h5>Rate this worker</h5>
-      
-      <!-- FIX: Replaced broken tags with proper [(ngModel)] binding -->
-      <select [(ngModel)]="ratingValue">
+      <select [(ngModel)]="ratingValue" class="review-input">
         <option [ngValue]="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
         <option [ngValue]="4">⭐⭐⭐⭐ (4 Stars)</option>
         <option [ngValue]="3">⭐⭐⭐ (3 Stars)</option>
         <option [ngValue]="2">⭐⭐ (2 Stars)</option>
         <option [ngValue]="1">⭐ (1 Star)</option>
       </select>
-      
-      <!-- FIX: Corrected input binding -->
       <input type="text" [(ngModel)]="reviewComment" placeholder="Write your experience..." class="review-input">
-      
-      <div style="margin-top: 10px;">
-        <button (click)="submitReview(booking)" class="submit-review-btn">Submit</button>
-        <button (click)="activeReviewId = null" class="cancel-review-btn">Cancel</button>
+      <div class="review-actions">
+        <button (click)="submitReview(booking)" class="btn-submit">Submit Review</button>
+        <button (click)="activeReviewId = null" class="btn-cancel">Cancel</button>
       </div>
     </div>
   </div>
 
-  <div *ngIf="booking.status === 'rejected'" style="margin-top:10px; color:#ef4444">
+  <div *ngIf="booking.status === 'rejected'" class="error-box">
     <p>Worker denied the request. Please search for another professional.</p>
   </div>
 </div>

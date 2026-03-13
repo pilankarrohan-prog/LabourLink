@@ -94,9 +94,22 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/save-labourer-profile`, data, this.getHeader());
   }
 
+  getLabourerProfile() {
+    return this.http.get(`${this.apiUrl}/labourer-profile`, this.getHeader());
+  }
+
   // Replace your existing method with this one:
   getIncomingRequests() {
     return this.http.get(`${this.apiUrl}/labourer-requests`, this.getHeader());
+  }
+
+  // --- Add inside AuthService ---
+  getUserProfile() {
+    return this.http.get(`${this.apiUrl}/user-profile`, this.getHeader());
+  }
+
+  saveUserProfile(data: any) {
+    return this.http.post(`${this.apiUrl}/save-user-profile`, data, this.getHeader());
   }
 
   respondToBooking(bookingId: number, status: string) {
@@ -119,10 +132,10 @@ export class AuthService {
     return this.http.get(`${this.apiUrl}/labourer-reviews`, this.getHeader());
   }
 
-  searchWorkers(category: string, location: string) {
+  searchWorkers(category: string, location: string, date?: string) {
     return this.http.post(
       `${this.apiUrl}/search-workers`,
-      { category, location },
+      { category, location: location.trim(), date: date || null },
       this.getHeader()
     );
   }

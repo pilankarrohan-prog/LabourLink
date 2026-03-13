@@ -1,1 +1,55 @@
-<p>labourer-settings works!</p>
+<div class="settings-header">
+  <h2>Profile & Work Details</h2>
+  <p>Update your professional information to attract more hirers.</p>
+</div>
+
+<div class="card settings-card">
+  <div class="form-grid">
+    
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" [(ngModel)]="labourer.name" placeholder="John Doe">
+    </div>
+
+    <div class="input-group">
+      <label>Primary Skill</label>
+      <select [(ngModel)]="labourer.skill">
+        <option *ngFor="let s of skillsList" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+
+    <div class="input-group full-width">
+      <label>City / Work Location</label>
+      <input type="text" [(ngModel)]="labourer.address" placeholder="e.g. Mumbai, Maharashtra">
+    </div>
+
+    <div class="input-group">
+      <label>Contact Number</label>
+      <input type="text" [(ngModel)]="labourer.contact" placeholder="+91 0000000000">
+    </div>
+
+    <div class="input-group">
+      <label>Gender</label>
+      <select [(ngModel)]="labourer.gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Any">Other</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label>Age</label>
+      <input type="number" [(ngModel)]="labourer.age" min="18">
+    </div>
+
+    <div class="input-group">
+      <label>Experience (in Years)</label>
+      <input type="number" [(ngModel)]="labourer.experience" min="0">
+    </div>
+
+  </div>
+
+  <div class="action-footer">
+    <button class="btn-save" (click)="saveProfile()">Save Profile Details</button>
+  </div>
+</div>

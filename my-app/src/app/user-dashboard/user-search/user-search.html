@@ -26,7 +26,7 @@
           <input [(ngModel)]="userLocation" placeholder="e.g. Pune">
         </div>
         <div class="field">
-          <label>When? (Required for Booking)</label>
+          <label>When? (Optional, filters availability)</label>
           <input type="datetime-local" [(ngModel)]="selectedDate">
         </div>
         <button class="btn-search" (click)="search()" [disabled]="isLoading">
@@ -55,10 +55,43 @@
           </div>
           
           <!-- 🛠️ FIX 3: Passes the full 'w' object so the ID is guaranteed to be correct -->
-          <button class="btn-book" (click)="book(w)">Book Now</button>
+          <button class="btn-book" (click)="initiateBooking(w)">Book Now</button>
           
         </div>
       </div>
+    </div>
+  </div>
+</div>
+<!-- Add to existing worker card button -->
+<button
+  class="btn-book"
+  style="display:none"
+  *ngIf="selectedWorkerForBooking as w"
+  (click)="initiateBooking(w)">
+  Book Now
+</button>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" *ngIf="showPaymentModal">
+  <div class="modal-card">
+    <h3>Secure Your Booking</h3>
+    <p>Select a payment method for <strong>{{selectedWorkerForBooking?.name}}</strong>.</p>
+    
+    <div class="payment-options">
+      <label class="pay-card" [class.active]="paymentMethod === 'cash'">
+        <input type="radio" [(ngModel)]="paymentMethod" value="cash" name="pay"> 💵 Cash after work
+      </label>
+      <label class="pay-card" [class.active]="paymentMethod === 'card'">
+        <input type="radio" [(ngModel)]="paymentMethod" value="card" name="pay"> 💳 Credit/Debit Card
+      </label>
+      <label class="pay-card" [class.active]="paymentMethod === 'upi'">
+        <input type="radio" [(ngModel)]="paymentMethod" value="upi" name="pay"> 📱 UPI / NetBanking
+      </label>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="showPaymentModal = false">Cancel</button>
+      <button class="btn-confirm" (click)="confirmBooking()">Confirm & Book</button>
     </div>
   </div>
 </div>

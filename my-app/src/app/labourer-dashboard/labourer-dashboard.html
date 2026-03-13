@@ -1,45 +1,26 @@
-<div class="layout">
-  <!-- SIDEBAR -->
+<div class="layout" [class.dark]="isDarkMode">
   <aside class="sidebar">
-    <div class="brand-logo">
-      <span class="icon">🛠️</span> Worker Pro
-    </div>
+    <div class="brand-logo">🛠️ Worker Pro</div>
     <nav class="nav-menu">
-      <a routerLink="."
-   routerLinkActive="active"
-   [routerLinkActiveOptions]="{ exact: true }">
-  📊 Overview
-</a>
-
-<a routerLink="requests"
-   routerLinkActive="active">
-  📨 Job Requests
-</a>
-
-<a routerLink="reviews"
-   routerLinkActive="active">
-  ⭐ My Reviews
-</a>
-
-<a routerLink="settings"
-   routerLinkActive="active">
-  👤 Profile Settings
-</a>
+      <a routerLink="." routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">📊 Overview</a>
+      <a routerLink="requests" routerLinkActive="active">📨 Job Requests</a>
+      <a routerLink="reviews" routerLinkActive="active">⭐ My Reviews</a>
+      <a routerLink="settings" routerLinkActive="active">👤 Profile Settings</a>
+      <a routerLink="payments" routerLinkActive="active">💰 Wallet & Earnings</a>
     </nav>
   </aside>
 
   <div class="main-wrapper">
-    <!-- TOP NAVBAR -->
     <header class="navbar">
-      <div class="nav-left">
-        <h2>Professional Dashboard 💼</h2>
-      </div>
+      <h2>Professional Dashboard 💼</h2>
       <div class="profile-menu">
-        <button class="btn-logout" (click)="logout()">Secure Logout</button>
+        <button class="btn-theme" (click)="toggleTheme()">
+          {{ isDarkMode ? '☀️ Light' : '🌙 Dark' }}
+        </button>
+        <button class="btn-logout" (click)="logout()">Logout</button>
       </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="content-area">
       <div class="content-container">
         <router-outlet></router-outlet>

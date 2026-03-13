@@ -21,15 +21,14 @@ import { LabourerSettings } from './labourer-dashboard/labourer-settings/laboure
 import { AdminDashboard } from './admin-dashboard/admin-dashboard';
 
 export const routes: Routes = [
-
-  // 👑 Protected Admin Dashboard
+  // Protected Admin Dashboard
   {
     path: 'admin-dashboard',
     component: AdminDashboard,
-    canActivate: [adminGuard] // 🔒 This protects the route!
+    canActivate: [adminGuard]
   },
 
-  // 🚀 User Dashboard + Child Routes
+  // User Dashboard + Child Routes
   {
     path: 'user-dashboard',
     component: UserDashboard,
@@ -37,11 +36,17 @@ export const routes: Routes = [
       { path: '', component: UserHome },
       { path: 'search', component: UserSearch },
       { path: 'bookings', component: UserBookings },
-      { path: 'settings', component: UserSettings }
+      { path: 'settings', component: UserSettings },
+      // Payment route
+      {
+        path: 'payments',
+        loadComponent: () =>
+                    import('./user-dashboard/user-payments/user-payments').then((m) => m.UserPayments)
+      }
     ]
   },
 
-  // 🛠️ Labourer Dashboard + Child Routes
+  // Labourer Dashboard + Child Routes
   {
     path: 'labourer-dashboard',
     component: LabourerDashboard,
@@ -49,12 +54,17 @@ export const routes: Routes = [
       { path: '', component: LabourerHome },
       { path: 'requests', component: LabourerRequests },
       { path: 'reviews', component: LabourerReviews },
-      { path: 'settings', component: LabourerSettings }
+      { path: 'settings', component: LabourerSettings },
+      // Payment route
+      {
+        path: 'payments',
+        loadComponent: () =>
+                    import('./labourer-dashboard/labourer-payments/labourer-payments').then((m) => m.LabourerPayments)
+      }
     ]
   },
 
   // Default Redirect
   { path: '', redirectTo: 'user-dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'user-dashboard' }
-
 ];

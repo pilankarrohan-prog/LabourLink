@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -49,9 +49,22 @@ import { AuthService } from '../../services/auth.service';
     input:checked + .slider:before { transform: translateX(26px); }
   `]
 })
-export class LabourerHome {
+export class LabourerHome implements OnInit {
   isAvailable = true;
+
   constructor(private auth: AuthService) {}
+
+  ngOnInit(): void {
+    this.auth.getLabourerProfile().subscribe({
+      next: (profile: any) => {
+        this.isAvailable = !!profile.is_available;
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
   toggleStatus() {
     this.auth.toggleAvailability(this.isAvailable).subscribe({ error: (err) => console.error(err) });
   }
